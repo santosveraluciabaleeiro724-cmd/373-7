@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIT PRO | Premium Financial Information Consulting</title>
+    <style>
+        /* Global Color Variables */
+        :root {
+            --primary: #60C5BA;
+            --secondary: #FF9AC1;
+            --accent: #9381FF;
+            --bg-base: #FFD166;
+            --text-light: #FCF9FF;
+            --nav-dark: #2D3142;
+            --text-dark: #222222;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+        img {
+            max-width: 100%;
+            display: block;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        ul {
+            list-style: none;
+        }
+        button, input, textarea {
+            font-family: inherit;
+        }
+
+        /* Navigation Bar */
+        header {
+            background-color: var(--nav-dark);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .logo span {
+            color: var(--secondary);
+        }
+        .desktop-nav ul {
+            display: flex;
+            gap: 2.5rem;
+        }
+        .desktop-nav a {
+            color: var(--text-light);
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .desktop-nav a:hover {
+            color: var(--accent);
+        }
+        .desktop-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+        .desktop-nav a:hover::after {
+            width: 100%;
+        }
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100vh;
+            background: var(--nav-dark);
+            padding: 4rem 2rem;
+            transition: right 0.4s ease;
+            z-index: 1000;
+        }
+        .mobile-nav.active {
+            right: 0;
+        }
+        .mobile-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        .mobile-nav ul {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .mobile-nav a {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            opacity: 0;
+            visibility: hidden;
+            z-index: 998;
+            transition: all 0.3s ease;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Page Section Base Style */
+        .page-section {
+            display: none;
+            min-height: calc(100vh - 72px);
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .page-section.active {
+            display: block;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--nav-dark);
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            display: block;
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+        .content-card {
+            background: var(--text-light);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 24px rgba(45, 49, 66, 0.12);
+            margin-bottom: 2rem;
+        }
+
+        /* Hero Banner Home Page */
+        .hero-banner {
+            width: 100%;
+            height: 60vh;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+        .hero-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .hero-overlay-text {
+            position: absolute;
+            inset: 0;
+            background: rgba(45, 49, 66, 0.65);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-light);
+            text-align: center;
+            padding: 2rem;
+        }
+        .hero-overlay-text h1 {
+            font-size: 3.2rem;
+            margin-bottom: 1rem;
+        }
+        .hero-overlay-text p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            line-height: 1.7;
+        }
+        .btn-primary {
+            margin-top: 2rem;
+            padding: 1rem 2.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(147, 129, 255, 0.35);
+        }
+        .grid-img-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin: 4rem 0;
+        }
+        .grid-img-item {
+            border-radius: 12px;
+            overflow: hidden;
+            height: 240px;
+        }
+        .grid-img-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .grid-img-item:hover img {
+            transform: scale(1.08);
+        }
+
+        /* Floating Side Advertisement Bar (Draggable & Closeable) */
+        .ad-sidebar {
+            position: fixed;
+            width: 160px;
+            height: 420px;
+            background: linear-gradient(180deg, var(--secondary), var(--accent));
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+            z-index: 900;
+            padding: 1rem;
+            cursor: grab;
+            user-select: none;
+        }
+        .ad-sidebar:active {
+            cursor: grabbing;
+        }
+        .ad-left {
+            top: 20%;
+            left: 12px;
+        }
+        .ad-right {
+            top: 20%;
+            right: 12px;
+        }
+        .ad-close-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            font-weight: bold;
+            color: var(--nav-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ad-content h4 {
+            color: white;
+            text-align: center;
+            margin: 1.5rem 0 1rem;
+            font-size: 1rem;
+        }
+        .ad-content p {
+            color: #fffefc;
+            font-size: 0.8rem;
+            text-align: center;
+            line-height: 1.5;
+        }
+        .ad-img-box {
+            width: 100%;
+            height: 110px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        /* About Us Page */
+        .two-col-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        .text-block h3 {
+            font-size: 1.8rem;
+            color: var(--nav-dark);
+            margin-bottom: 1.2rem;
+        }
+        .text-block p {
+            line-height: 1.8;
+            font-size: 1.05rem;
+            margin-bottom: 1rem;
+        }
+        .img-block {
+            border-radius: 16px;
+            overflow: hidden;
+            height: 400px;
+        }
+
+        /* Services Page */
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .service-card {
+            background: var(--text-light);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-8px);
+        }
+        .service-img {
+            width: 100%;
+            height: 200px;
+        }
+        .service-text {
+            padding: 1.8rem;
+        }
+        .service-text h4 {
+            font-size: 1.4rem;
+            color: var(--nav-dark);
+            margin-bottom: 0.8rem;
+        }
+        .service-text p {
+            line-height: 1.7;
+            color: #444;
+        }
+
+        /* Contact Page Form */
+        .contact-wrap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.6rem;
+            font-weight: 500;
+            color: var(--nav-dark);
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e2e2;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .success-msg {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #d4edda;
+            color: #155724;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .contact-info-item {
+            margin-bottom: 2rem;
+        }
+        .contact-info-item h4 {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 0.6rem;
+        }
+        .contact-info-item p {
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        /* Team Page */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2.5rem;
+        }
+        .team-card {
+            background: var(--text-light);
+            border-radius: 14px;
+            overflow: hidden;
+            text-align: center;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.09);
+        }
+        .team-avatar {
+            width: 100%;
+            height: 280px;
+        }
+        .team-desc {
+            padding: 1.5rem;
+        }
+        .team-desc h4 {
+            font-size: 1.3rem;
+            margin-bottom: 0.4rem;
+            color: var(--nav-dark);
+        }
+        .team-desc span {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--nav-dark);
+            color: var(--text-light);
+            text-align: center;
+            padding: 2.5rem 2rem;
+            margin-top: 4rem;
+        }
+        footer p {
+            font-size: 0.95rem;
+            opacity: 0.85;
+        }
+
+        /* Mobile Responsive Adjustments */
+        @media screen and (max-width: 992px) {
+            .desktop-nav {
+                display: none;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+            .two-col-grid, .contact-wrap {
+                grid-template-columns: 1fr;
+            }
+            .grid-img-group {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .hero-overlay-text h1 {
+                font-size: 2.2rem;
+            }
+            .ad-sidebar {
+                width: 120px;
+                height: 340px;
+            }
+        }
+        @media screen and (max-width: 576px) {
+            .grid-img-group {
+                grid-template-columns: 1fr;
+            }
+            .hero-overlay-text h1 {
+                font-size: 1.8rem;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+            .nav-container {
+                padding: 1rem;
+            }
+            .page-section {
+                padding: 2.5rem 1rem;
+            }
+            .ad-sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Left Advertisement Bar -->
+    <div class="ad-sidebar ad-left" id="adLeft">
+        <button class="ad-close-btn" onclick="closeAd('adLeft')">×</button>
+        <div class="ad-content">
+            <div class="ad-img-box">
+                <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/68.jpg" alt="Finance Ad">
+            </div>
+            <h4>Global Financial Consulting</h4>
+            <p>Professional market analysis & asset planning</p>
+        </div>
+    </div>
+
+    <!-- Floating Right Advertisement Bar -->
+    <div class="ad-sidebar ad-right" id="adRight">
+        <button class="ad-close-btn" onclick="closeAd('adRight')">×</button>
+        <div class="ad-content">
+            <div class="ad-img-box">
+                <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/69.jpg" alt="Investment Service">
+            </div>
+            <h4>One-on-One Advisory</h4>
+            <p>Customized financial strategy for enterprises</p>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="overlay" id="menuOverlay"></div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-nav" id="mobileNav">
+        <button class="mobile-close" id="mobileCloseBtn">×</button>
+        <ul>
+            <li><a href="#home" onclick="switchPage('home'); closeMobileMenu();">Home</a></li>
+            <li><a href="#about" onclick="switchPage('about'); closeMobileMenu();">About Us</a></li>
+            <li><a href="#services" onclick="switchPage('services'); closeMobileMenu();">Our Services</a></li>
+            <li><a href="#team" onclick="switchPage('team'); closeMobileMenu();">Our Team</a></li>
+            <li><a href="#contact" onclick="switchPage('contact'); closeMobileMenu();">Contact Us</a></li>
+        </ul>
+    </div>
+
+    <!-- Top Navigation Header -->
+    <header>
+        <div class="nav-container">
+            <a href="#home" class="logo" onclick="switchPage('home')">CIT <span>PRO</span></a>
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="#home" onclick="switchPage('home')">Home</a></li>
+                    <li><a href="#about" onclick="switchPage('about')">About Us</a></li>
+                    <li><a href="#services" onclick="switchPage('services')">Services</a></li>
+                    <li><a href="#team" onclick="switchPage('team')">Our Team</a></li>
+                    <li><a href="#contact" onclick="switchPage('contact')">Contact Us</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn" id="mobileOpenBtn">☰</button>
+        </div>
+    </header>
+
+    <!-- Home Page Section -->
+    <section class="page-section active" id="home">
+        <div class="hero-banner">
+            <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/70.jpg" alt="CIT PRO Financial Consulting Hero">
+            <div class="hero-overlay-text">
+                <h1>CIT PRO Financial Information Consulting</h1>
+                <p>We deliver professional, global financial data analysis, market forecasting, asset allocation consulting and enterprise financial risk control solutions for institutions and individual investors worldwide.</p>
+                <button class="btn-primary" onclick="switchPage('services')">Explore Our Services</button>
+            </div>
+        </div>
+
+        <h2 class="section-title">Our Core Business Scenarios</h2>
+        <div class="grid-img-group">
+            <div class="grid-img-item">
+                <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/71.jpg" alt="Global Market Research">
+            </div>
+            <div class="grid-img-item">
+                <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/72.jpg" alt="Enterprise Financial Advisory">
+            </div>
+            <div class="grid-img-item">
+                <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/73.jpg" alt="Investment Risk Analysis">
+            </div>
+            <div class="grid-img-item">
+                <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/74.jpg" alt="Asset Management Consulting">
+            </div>
+            <div class="grid-img-item">
+                <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/75.jpg" alt="Financial Data Report">
+            </div>
+            <div class="grid-img-item">
+                <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/76.jpg" alt="Cross-border Finance Service">
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2 class="section-title" style="margin-bottom: 1.5rem;">Why Choose CIT PRO</h2>
+            <p style="font-size: 1.1rem; line-height: 1.8;">
+                Founded in Ripon, UK, CIT PRO focuses on independent financial information consulting services. Our team consists of senior financial analysts, market strategists and risk control experts with decades of experience in global capital markets. We provide objective, data-driven financial consulting without bias, helping clients avoid market traps and optimize investment portfolios. Our service covers stock, foreign exchange, commodities, cross-border corporate finance and wealth management planning.
+            </p>
+            <button class="btn-primary" style="margin-top: 1.5rem;" onclick="switchPage('about')">Learn More About Us</button>
+        </div>
+    </section>
+
+    <!-- About Us Page Section -->
+    <section class="page-section" id="about">
+        <h2 class="section-title">About CIT PRO</h2>
+        <div class="two-col-grid">
+            <div class="text-block">
+                <h3>Company Overview</h3>
+                <p>CIT PRO is a registered financial information consulting firm headquartered in Ripon, England. We specialize in third-party neutral financial analysis, market trend research, investment risk assessment and corporate financial planning services for global clients.</p>
+                <p>We adhere to the core value of "Data First, Objectivity Oriented". All consulting reports and market analysis are based on real-time global financial data, historical market trends and macroeconomic indicators, ensuring clients receive reliable, actionable financial advice.</p>
+                <h3 style="margin-top: 2rem;">Our Corporate Vision</h3>
+                <p>Become the most trusted independent financial information consulting brand in Europe, providing transparent, professional and affordable financial advisory services to retail investors, SMEs and institutional clients.</p>
+            </div>
+            <div class="img-block">
+                <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/77.jpg" alt="CIT PRO Office Building">
+            </div>
+        </div>
+
+        <div class="content-card" style="margin-top: 4rem;">
+            <h3 style="margin-bottom: 1rem;">Core Corporate Values</h3>
+            <ul style="line-height: 2; font-size: 1.05rem;">
+                <li>✅ Objectivity: No biased promotion of any financial products</li>
+                <li>✅ Professionalism: Team of certified senior financial analysts</li>
+                <li>✅ Confidentiality: Strict client data privacy protection system</li>
+                <li>✅ Global Vision: Real-time tracking of European, American and Asian capital markets</li>
+                <li>✅ Customization: Tailor consulting solutions for different client demands</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Our Services Page Section -->
+    <section class="page-section" id="services">
+        <h2 class="section-title">Our Professional Financial Consulting Services</h2>
+        <div class="service-grid">
+            <div class="service-card">
+                <div class="service-img">
+                    <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/78.jpg" alt="Global Market Analysis">
+                </div>
+                <div class="service-text">
+                    <h4>Global Market Trend Analysis</h4>
+                    <p>Daily, weekly and monthly comprehensive analysis of stock, forex, commodity and crypto markets, including macroeconomic impact assessment and price trend forecasting.</p>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="service-img">
+                    <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/79.jpg" alt="Investment Risk Control">
+                </div>
+                <div class="service-text">
+                    <h4>Investment Risk Control Consulting</h4>
+                    <p>Evaluate asset portfolio risk exposure, design risk hedging strategies, warn about market volatility risks and adjust asset allocation ratios dynamically.</p>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="service-img">
+                    <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/80.jpg" alt="Enterprise Financial Advisory">
+                </div>
+                <div class="service-text">
+                    <h4>SME Enterprise Financial Advisory</h4>
+                    <p>Cross-border capital flow planning, overseas investment feasibility research, corporate financial statement analysis and capital operation consulting for small and medium enterprises.</p>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="service-img">
+                    <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/81.jpg" alt="Personal Wealth Planning">
+                </div>
+                <div class="service-text">
+                    <h4>Personal Wealth Management Plan</h4>
+                    <p>Custom long-term wealth allocation plans for individual investors, covering low-risk fixed income, medium-growth equity assets and overseas diversified allocation.</p>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="service-img">
+                    <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/82.jpg" alt="Financial Data Report Custom">
+                </div>
+                <div class="service-text">
+                    <h4>Custom Financial Data Reports</h4>
+                    <p>Custom professional research reports for institutions, including industry track analysis, company valuation data and comparative market benchmark reports.</p>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="service-img">
+                    <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/83.jpg" alt="One-on-One Consultant">
+                </div>
+                <div class="service-text">
+                    <h4>Exclusive One-on-One Consulting</h4>
+                    <p>Private dedicated senior analyst service, real-time market consultation, regular one-to-one video review of personal investment portfolios.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Team Page Section -->
+    <section class="page-section" id="team">
+        <h2 class="section-title">Our Senior Financial Analyst Team</h2>
+        <div class="team-grid">
+            <div class="team-card">
+                <div class="team-avatar">
+                    <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/84.jpg" alt="CEO Richard Hall">
+                </div>
+                <div class="team-desc">
+                    <h4>Richard Hall</h4>
+                    <span>Founder & CEO</span>
+                </div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">
+                    <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/85.jpg" alt="Chief Market Analyst">
+                </div>
+                <div class="team-desc">
+                    <h4>Sarah Mitchell</h4>
+                    <span>Chief Market Analyst</span>
+                </div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">
+                    <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/86.jpg" alt="Risk Control Director">
+                </div>
+                <div class="team-desc">
+                    <h4>James Wilson</h4>
+                    <span>Director of Risk Control</span>
+                </div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">
+                    <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/87.jpg" alt="Enterprise Consulting Manager">
+                </div>
+                <div class="team-desc">
+                    <h4>Emma Thompson</h4>
+                    <span>Enterprise Consulting Manager</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Us Page Section -->
+    <section class="page-section" id="contact">
+        <h2 class="section-title">Contact Us</h2>
+        <div class="contact-wrap">
+            <div class="content-card">
+                <h3 style="margin-bottom: 1.5rem;">Send Us An Inquiry</h3>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" required placeholder="Your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" required placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" placeholder="Your contact phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Your Message</label>
+                        <textarea id="message" rows="5" required placeholder="Describe your consulting demand..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Submit Inquiry</button>
+                    <div class="success-msg" id="submitSuccess">Your message has been submitted successfully! Our consultant will contact you within 24 working hours.</div>
+                </form>
+            </div>
+            <div>
+                <div class="contact-info-item">
+                    <h4>Company Address</h4>
+                    <p>46 Skipton Rd, Ripon, England</p>
+                </div>
+                <div class="contact-info-item">
+                    <h4>Contact Phone</h4>
+                    <p>+44 7754053459</p>
+                </div>
+                <div class="contact-info-item">
+                    <h4>Business Hours</h4>
+                    <p>Monday - Friday: 09:00 - 18:00 GMT<br>Saturday: 10:00 - 14:00 GMT<br>Sunday & Public Holidays: Closed</p>
+                </div>
+                <div class="contact-info-item">
+                    <h4>Service Scope</h4>
+                    <p>Global financial information consulting, market analysis, enterprise financial planning, personal wealth advisory & risk assessment services.</p>
+                </div>
+                <div style="margin-top: 2rem; border-radius: 14px; overflow: hidden; height: 300px;">
+                    <img src="https://santosveraluciabaleeiro724-cmd.github.io/373-7/88.jpg" alt="CIT PRO Office Location">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page Footer -->
+    <footer>
+        <p>© 2026 CIT PRO Financial Information Consulting. All Rights Reserved.</p>
+        <p style="margin-top: 0.6rem;">Address: 46 Skipton Rd, Ripon, England | Tel: +44 7754053459</p>
+    </footer>
+
+    <script>
+        // Page Switch Logic
+        function switchPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Mobile Menu Control
+        const mobileNav = document.getElementById('mobileNav');
+        const overlay = document.getElementById('menuOverlay');
+        const openBtn = document.getElementById('mobileOpenBtn');
+        const closeBtn = document.getElementById('mobileCloseBtn');
+
+        function openMobileMenu() {
+            mobileNav.classList.add('active');
+            overlay.classList.add('active');
+        }
+        function closeMobileMenu() {
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+        openBtn.addEventListener('click', openMobileMenu);
+        closeBtn.addEventListener('click', closeMobileMenu);
+        overlay.addEventListener('click', closeMobileMenu);
+
+        // Close Floating Advertisement
+        function closeAd(adId) {
+            document.getElementById(adId).style.display = 'none';
+        }
+
+        // Draggable Floating Ad Sidebar
+        function makeDraggable(elementId) {
+            const el = document.getElementById(elementId);
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            el.onmousedown = dragMouseDown;
+            function dragMouseDown(e) {
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+            function elementDrag(e) {
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                el.style.top = (el.offsetTop - pos2) + "px";
+                el.style.left = (el.offsetLeft - pos1) + "px";
+                el.style.right = "auto";
+            }
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+        makeDraggable('adLeft');
+        makeDraggable('adRight');
+
+        // Contact Form Submit - Always show success
+        const contactForm = document.getElementById('contactForm');
+        const successMsg = document.getElementById('submitSuccess');
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            successMsg.style.display = 'block';
+            contactForm.reset();
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
